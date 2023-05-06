@@ -275,18 +275,19 @@ class FollowTests(TestCase):
         self.client_auth_follower.get(
             reverse('posts:profile_follow', kwargs={
                 'username': self.user_following.username}))
+        follow = Follow.objects.filter(author=self.user_following).first()
+        self.assertIsNotNone(follow)
         self.assertEqual(Follow.objects.all().count(), 1)
         self.client_auth_follower.get(
             reverse('posts:profile_follow', kwargs={
                 'username': self.user_following.username}))
         self.assertEqual(Follow.objects.all().count(), 1)
 
-    def test_unvollow(self):
+    def test_unfollow(self):
         """Unfollow test."""
-        self.client_auth_follower.get(reverse('posts:profile_follow',
-                                              kwargs={'username':
-                                                      self.user_following.
-                                                      username}))
+        Follow.objects.create(author=self.user_following,
+                              user=self.user_follower)
+        self.assertEqual(Follow.objects.all().count(), 1)
         self.client_auth_follower.get(reverse('posts:profile_unfollow',
                                       kwargs={'username':
                                               self.user_following.username}))
