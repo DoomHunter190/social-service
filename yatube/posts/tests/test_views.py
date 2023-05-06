@@ -300,3 +300,8 @@ class FollowTests(TestCase):
         response = self.client_auth_follower.get(
             reverse('posts:follow_index'))
         self.assertEqual(len(response.context['page_obj']), 0)
+        Follow.objects.create(user=self.user_follower,
+                              author=self.user_following)
+        response = self.client_auth_follower.get('/follow/')
+        post_text_0 = response.context["page_obj"][0].text
+        self.assertEqual(post_text_0, self.post.text)
